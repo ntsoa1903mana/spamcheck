@@ -95,7 +95,7 @@ async function sendMessagesToNumbers() {
 
 // Start sending messages to all numbers every minute for testing
 sendMessagesToNumbers();
-const port = 3002;
+const port = 3000;
 const app = express();
 
 app.listen(port, () => {
