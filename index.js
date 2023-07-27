@@ -1,5 +1,5 @@
 // index.js
-
+const express = require('express');
 const axios = require('axios');
 const Redis = require('ioredis');
 require('dotenv').config();
@@ -95,3 +95,9 @@ async function sendMessagesToNumbers() {
 
 // Start sending messages to all numbers every minute for testing
 sendMessagesToNumbers();
+const port = 3002;
+const app = express();
+
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
