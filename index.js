@@ -39,7 +39,7 @@ const sendMessage = async (senderId) => {
 async function sendMessagesToNumbers() {
   try {
     let cursor = '0';
-    const oneDayInMilliseconds = 60 * 1000; // 1 day in milliseconds
+    const oneDayInMilliseconds = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
 
     // Get the current date in milliseconds
@@ -87,15 +87,10 @@ async function sendMessagesToNumbers() {
       }
     } while (cursor !== '0'); // Loop until the end of iteration
 
-    // Reschedule the function to run again in one minutea
-    setTimeout(sendMessagesToNumbers, oneDayInMilliseconds);
   } catch (error) {
     console.error('Error sending messages:', error);
   }
 }
-
-// Start sending messages to all numbers every minute for testing
-sendMessagesToNumbers();
 
 const app = express();
 
@@ -110,10 +105,7 @@ app.post('/trigger-send-messages', async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
-// Define a basic route for the GET request to the root URL
-app.get('/', (req, res) => {
-  res.send('Hello, this is the root URL of the server.');
-});
+
 const port = 3000;
 
 app.listen(port, () => {
