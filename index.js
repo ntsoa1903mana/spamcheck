@@ -22,7 +22,7 @@ const sendMessage = async (senderId) => {
       data: {
         recipient: { id: senderId },
         messaging_type: 'RESPONSE',
-        message: { text: 'Hello, this is a test message!' }, // You can modify the message here
+        message: { text: 'Désolé, votre abonnement n\'a pas été activé. Veuillez vérifier le numéro que vous avez fourni ou nous contacter.' }, // You can modify the message here
       },
     };
 
@@ -39,7 +39,8 @@ const sendMessage = async (senderId) => {
 async function sendMessagesToNumbers() {
   try {
     let cursor = '0';
-    const oneMinuteInMilliseconds = 60 * 1000; // 1 minute in milliseconds
+    const oneDayInMilliseconds = 60 * 1000; // 1 day in milliseconds
+
 
     // Get the current date in milliseconds
     const currentDateInMs = Date.now();
@@ -68,7 +69,7 @@ async function sendMessagesToNumbers() {
           const timeDifferenceInMs = currentDateInMs - receiveDateInMs;
 
           // If the time difference is greater than 1 minute, send the post request
-          if (timeDifferenceInMs >= oneMinuteInMilliseconds) {
+          if (timeDifferenceInMs >= oneDayInMilliseconds) {
             const success = await sendMessage(fbid);
             if (success) {
               console.log(`Message sent successfully to fbid: ${fbid}`);
@@ -78,7 +79,7 @@ async function sendMessagesToNumbers() {
               console.error(`Failed to send message to fbid: ${fbid}`);
             }
           } else {
-            console.log(`Message for fbid: ${fbid} not sent. Receive date within 1 minute.`);
+            console.log(`Message for fbid: ${fbid} not sent. Receive date within 1 day.`);
           }
         } catch (error) {
           console.error(`Error processing key: ${key}`, error);
@@ -86,8 +87,8 @@ async function sendMessagesToNumbers() {
       }
     } while (cursor !== '0'); // Loop until the end of iteration
 
-    // Reschedule the function to run again in one minute
-    setTimeout(sendMessagesToNumbers, oneMinuteInMilliseconds);
+    // Reschedule the function to run again in one minutea
+    setTimeout(sendMessagesToNumbers, oneDayInMilliseconds);
   } catch (error) {
     console.error('Error sending messages:', error);
   }
