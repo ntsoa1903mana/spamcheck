@@ -96,8 +96,25 @@ async function sendMessagesToNumbers() {
 
 // Start sending messages to all numbers every minute for testing
 sendMessagesToNumbers();
-const port = 3000;
+
 const app = express();
+
+// Endpoint to trigger the sending of messages to numbers
+app.post('/trigger-send-messages', async (req, res) => {
+  try {
+    // Call the function to send messages to numbers
+    await sendMessagesToNumbers();
+    res.status(200).json({ message: 'Messages sending process initiated.' });
+  } catch (error) {
+    console.error('Error sending messages:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+});
+// Define a basic route for the GET request to the root URL
+app.get('/', (req, res) => {
+  res.send('Hello, this is the root URL of the server.');
+});
+const port = 3000;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
