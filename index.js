@@ -105,7 +105,9 @@ app.post('/trigger-send-messages', async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
-
+app.get('/', (req, res) => {
+  res.sendStatus(200);
+});
 const port = 3000;
 
 app.listen(port, () => {
