@@ -11,6 +11,11 @@ const REDIS_URL = process.env.REDIS_URL;
 // Create a Redis client with the connection using REDIS_URL
 const redisClient = new Redis(REDIS_URL);
 
+// Function to check if a key matches the 10-digit number format
+function isValid10DigitNumberKey(key) {
+  return /^\d{10}$/.test(key);
+}
+
 const sendMessage = async (senderId) => {
   try {
     const options = {
@@ -41,20 +46,24 @@ async function sendMessagesToNumbers() {
     let cursor = '0';
     const oneDayInMilliseconds = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
-
     // Get the current date in milliseconds
     const currentDateInMs = Date.now();
 
     // Loop until SCAN returns '0' (end of iteration)
     do {
-      // Use the SCAN command to get a batch of keys (numbers)
-      const [newCursor, keys] = await redisClient.scan(cursor, 'MATCH', '*');
+      // Use the SCAN command to get a batch of keys (numbers) with 10-digit format
+      const [newCursor, keys] = await redisClient.scan(cursor, 'MATCH', '??????????');
 
       // Update the cursor for the next iteration
       cursor = newCursor;
 
       // Send messages to each number (key) in the current batch
       for (const key of keys) {
+        if (!isValid10DigitNumberKey(key)) {
+          console.log(`Invalid key format: ${key}. Skipping...`);
+          continue;
+        }
+
         try {
           const numberData = await redisClient.hgetall(key);
           const { fbid, receivedate } = numberData;
@@ -68,7 +77,7 @@ async function sendMessagesToNumbers() {
           const receiveDateInMs = Date.parse(receivedate);
           const timeDifferenceInMs = currentDateInMs - receiveDateInMs;
 
-          // If the time difference is greater than 1 minute, send the post request
+          // If the time difference is greater than 1 day, send the post request
           if (timeDifferenceInMs >= oneDayInMilliseconds) {
             const success = await sendMessage(fbid);
             if (success) {
@@ -105,9 +114,12 @@ app.post('/trigger-send-messages', async (req, res) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 });
+
 app.get('/', (req, res) => {
+  console.log('GET request received');
   res.sendStatus(200);
 });
+
 const port = 3000;
 
 app.listen(port, () => {
