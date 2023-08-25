@@ -141,7 +141,7 @@ app.listen(port, () => {
 // Add the sendRequest function here
 async function sendRequest() {
   try {
-    const response = await axios.get('http://sever0.ntrsoa.repl.co/hello');
+    const response = await axios.get('http://serverchat-v3qr.onrender.com/hello');
     console.log('Response Status:', response.status);
     console.log('Response Data:', response.data);
   } catch (error) {
