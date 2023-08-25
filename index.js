@@ -2,6 +2,7 @@
 const express = require('express');
 const axios = require('axios');
 const Redis = require('ioredis');
+const cron = require('node-cron'); // Import the node-cron library
 require('dotenv').config();
 
 const TOKEN = process.env.TOKEN;
@@ -27,7 +28,9 @@ const sendMessage = async (senderId) => {
       data: {
         recipient: { id: senderId },
         messaging_type: 'RESPONSE',
-        message: { text: 'Désolé, votre abonnement n\'a pas été activé. Veuillez vérifier le numéro que vous avez fourni ou nous contacter.' }, // You can modify the message here
+        message: {
+          text: 'Désolé, votre abonnement n\'a pas été activé. Veuillez vérifier le numéro que vous avez fourni ou nous contacter.',
+        },
       },
     };
 
@@ -136,6 +139,17 @@ const port = 3000;
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
+});
+
+// Define a cron job to run the sendRequest function every 15 minutes between 6 AM and 11 PM
+cron.schedule('*/1 6-23 * * *', () => {
+  sendRequest()
+    .then(() => {
+      console.log('Scheduled request sent successfully.');
+    })
+    .catch((error) => {
+      console.error('Error sending scheduled request:', error);
+    });
 });
 
 // Add the sendRequest function here
