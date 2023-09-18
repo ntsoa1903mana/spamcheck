@@ -46,7 +46,7 @@ const sendMessage = async (senderId) => {
 async function sendMessagesToNumbers() {
   try {
     let cursor = '0';
-    const oneMinuteInMilliseconds = 1 * 60 * 1000; // 1 minute in milliseconds
+    const oneMinuteInMilliseconds = 24 * 60 * 60 * 1000; // 1 minute in milliseconds
 
     // Get the current date in milliseconds
     const currentDateInMs = Date.now();
